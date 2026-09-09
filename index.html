@@ -58,6 +58,15 @@
   }
   button:hover { transform: translateY(-2px); }
   #count { font-weight: 700; color: var(--accent); }
+  #status {
+    margin-top: 1.25rem;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    background: rgba(148, 163, 184, 0.1);
+  }
+  #status.ok { color: #4ade80; }
+  #status.err { color: #f87171; }
 </style>
 </head>
 <body>
@@ -68,6 +77,28 @@
     <button onclick="document.getElementById('count').textContent = Number(document.getElementById('count').textContent) + 1">
       클릭해보세요
     </button>
+    <div id="status">Supabase 연결 확인 중...</div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = "https://yxcqteepjhayqwxemznf.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_P6GsvhTOlKVCmPlKCL35YA_s2q6HTNT";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const statusEl = document.getElementById('status');
+
+    (async () => {
+      try {
+        const { error } = await supabase.auth.getSession();
+        if (error) throw error;
+        statusEl.textContent = "Supabase 연결 성공 ✔";
+        statusEl.classList.add('ok');
+      } catch (err) {
+        statusEl.textContent = "Supabase 연결 실패: " + err.message;
+        statusEl.classList.add('err');
+      }
+    })();
+  </script>
 </body>
 </html>
